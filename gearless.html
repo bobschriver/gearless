@@ -1,0 +1,35 @@
+<head>
+  <title>gearless</title>
+</head>
+
+<body>
+	{{> add_gear }}
+</body>
+
+<template name="add_gear">
+	<div class='gear_item_container'>
+	{{#each gear_item}}
+		<form class='gear_item'>
+			Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
+		</form>
+		<div class='gear_use_container'>
+		{{#each gear_use gear_item_id=_id}}
+			<form class='gear_use'>
+				Gear Use <input type='text' name='gear_use' id={{_id}} value="{{gear_use_text}}"/>
+			</form>
+			{{#each gear_item gear_use_name=gear_use_text }}
+				<div class='gear_item_container'>
+						{{.}}
+				</div>
+			{{/each}}
+		{{/each}}
+		<form class='gear_use'>
+			Gear Use <input type='text' name='gear_use'/>
+		</form>
+		</div>
+	{{/each}}
+	<form class='gear_item'>
+		Gear Item <input type='text' name='gear_item'/>
+	</form>
+	</div>
+</template>
