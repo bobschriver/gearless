@@ -1,5 +1,5 @@
 if(Meteor.isClient) {
-	Template.add_gear.helpers({
+	Template.gear_list.helpers({
 		gear_properties : function(gear_use) {
 			
 			//TODO Fetch default gear properties from DB
@@ -41,37 +41,67 @@ if(Meteor.isClient) {
 		},
 
 		gear_use : function (gear_item_id) {
-			return GearUses.find({ _id : gear_item_id });
+			return GearUses.find({ gear_item_id : gear_item_id });
 		},
 
-		gear_item : function () {
-			return GearItems.find({});
-		}
+		gear_item : function (gear_list_id) {
+			return GearItems.find({ gear_list_id : gear_list_id });
+		},
+
+        gear_list : function (user_id) {
+            console.log("Fetching gear lists");
+            console.log(user_id);
+			return GearLists.find({ user_id : user_id });
+		},
+
+        get_user_id : function () {
+            var user_id = { user_id : Session.get('user_id') };
+            return user_id;
+        }
 	});
 	
-	Template.add_gear.events({
+	Template.gear_list.events({
 		'submit .gear_item': function (event) {
 			var gear_item = event.target.gear_item.value;
 			var gear_item_id = event.target.gear_item._id;
-			console.log(gear_item);
-			console.log(gear_item_id);
-		
+		    
+            // TODO: populate data context with gear list ID
+            var gear_list_id = this.gear_list_id;
+
+            console.log("Inserting gear items");
+            console.log(user_id);
+
 			GearItems.insert({ gear_item_text: gear_item });
 							
 			return false;
 		},
 		
 		'submit .gear_use': function (event) {
-			var gear_item = event.target.gear_use.value;
-			console.log(gear_item);
+			var gear_use = event.target.gear_use.value;
 			
 			GearUses.insert({ gear_use_text: gear_use });
 
 			return false;
-		}
+        },
+
+        'submit .gear_list': function (event) {
+			var user_id = this.user_id;
+            
+            console.log("Inserting gear lists");
+            console.log(user_id);
+
+            GearLists.insert({ user_id: user_id });
+
+			return false;
+        },
+
 	});
+
+        
+    Session.set('user_id' , 0);
 }
 
+var GearLists = new Mongo.Collection("gear_lists");
 var GearItems = new Mongo.Collection("gear_items");
 var GearUses = new Mongo.Collection("gear_uses");
 
