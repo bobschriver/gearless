@@ -16,56 +16,21 @@
 
 <template name="gear_list">
 {{#with get_user_id}}
-GEAR LIST
 <div class='gear_lists_container container-fluid'>
     {{#each gear_list user_id}}
-    <div class='gear_list_container row'>
-        {{#each gear_item gear_list_id=_id}}
-        <div class='gear_item_container row'>
-            <div class='col-md-4'>
-                <form class='gear_item'>
-                    Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
-                </form>
-            </div>
-            <div class='col-md-8'>
-                {{#each gear_use gear_item_id=_id}}
-                <div class='gear_use_container row'>
-                    <div class='col-md-4'>
-                        <form class='gear_use'>
-                            Gear Use <input type='text' name='gear_use' id={{_id}} value="{{gear_use_text}}"/>
-                        </form>
-                    </div>
-                    <div class='col-md-8'>
-                        {{#each gear_property gear_use_name=gear_use_text }}
-                        <div class='gear_property_container'>
-                            {{.}}
-                        </div>
-                        {{/each}}
-                    </div>
-                </div>
-                {{/each}}
-                <div class='add_gear_use_container row'>
-                    <div class='col-md-4'>
-                        <form class='gear-use'>
-                            Gear Use <input type='text' name='gear_use'/>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <div class='gear_list_container row border'>
+        <div class='col-md-2'>
+            {{ gear_list_text }}
         </div>
-        {{/each}}
-        <div class="add_gear_item_container row">
-            <div class='col-md-4'>
-                <form class='gear_item'>
-                    Gear Item <input type='text' name='gear_item'/>
-                </form>
-            </div>
+        <div class='col-md-10'>
+            {{> gear_item gear_list_id=_id }}
         </div>
     </div>
     {{/each}}
     <div class="add_gear_list_container row">
-        <div class='col-md-4'>
+        <div class='col-md-2'>
             <form class='gear_list'>
+                <input type='text' name='gear_list_text'/>
                 <input type='submit' value='Add Gear List'/>
             </form>
         </div>
@@ -74,5 +39,50 @@ GEAR LIST
 {{/with}}
 </template>
 
-<template name='gear_property'>
+<template name='gear_item'>
+{{#each gear_item gear_list_id}}
+<div class='gear_item_container row border'>
+    <div class='col-md-3'>
+        <form class='gear_item'>
+            Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
+        </form>
+    </div>
+    <div class='col-md-9'>
+        {{> gear_use gear_item_id=_id }}
+    </div>
+</div>
+{{/each}}
+<div class="add_gear_item_container row">
+    <div class='col-md-3'>
+        <form class='gear_item'>
+            Gear Item <input type='text' name='gear_item_text'/>
+        </form>
+    </div>
+</div>
+</template>
+
+<template name='gear_use'>
+{{#each gear_use gear_item_id}}
+<div class='gear_use_container row border'>
+    <div class='col-md-3'>
+        <form class='gear_use'>
+            Gear Use <input type='text' name='gear_use' id={{_id}} value="{{gear_use_text}}"/>
+        </form>
+    </div>
+    <div class='col-md-9'>
+        {{#each gear_property gear_use_name=gear_use_text }}
+        <div class='gear_property_container'>
+            {{.}}
+        </div>
+        {{/each}}
+    </div>
+</div>
+{{/each}}
+<div class='add_gear_use_container row'>
+    <div class='col-md-3'>
+        <form class='gear-use'>
+            Gear Use <input type='text' name='gear_use_text'/>
+        </form>
+    </div>
+</div>
 </template>
