@@ -66,23 +66,46 @@
 <div class='gear_use_container row border'>
     <div class='col-md-3'>
         <form class='gear_use'>
-            Gear Use <input type='text' name='gear_use' id={{_id}} value="{{gear_use_text}}"/>
+            Gear Use <input type='text' name='gear_use_text' id={{_id}} value="{{gear_use_text}}"/>
         </form>
     </div>
     <div class='col-md-9'>
-        {{#each gear_property gear_use_name=gear_use_text }}
-        <div class='gear_property_container'>
-            {{.}}
+        <div class='row'>
+            {{> gear_property gear_use_id=_id}}
         </div>
-        {{/each}}
+        <div class='row'>
+            {{> suggested_gear_property gear_use_id=_id}}
+        </div>
     </div>
 </div>
 {{/each}}
 <div class='add_gear_use_container row'>
     <div class='col-md-3'>
-        <form class='gear-use'>
+        <form class='gear_use'>
             Gear Use <input type='text' name='gear_use_text'/>
         </form>
     </div>
 </div>
 </template>
+
+<template name='gear_property'>
+    <form class='gear_property'>
+        {{#each gear_property gear_use_id}}
+            {{gear_property_heading}} <input type='text' name='gear_property_text' id={{_id}} value="{{gear_property_text}}"/>
+        {{/each}}
+    </form>
+</template>
+
+<template name='suggested_gear_property'>
+<div class='col-md-12'>
+    {{#each suggested_gear_property gear_use_id}}
+    <div class='row'>
+        <form class='suggested_gear_property'>
+            {{gear_property_heading}} <input type='text' name='gear_property_text' id='{{_id}}'/>
+        </form>
+    </div>
+    {{/each}}
+</div>
+</template>
+
+

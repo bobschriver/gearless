@@ -26,6 +26,33 @@ if(Meteor.isClient) {
 
     });
 
+    Template.gear_property.helpers({
+        gear_property : function (gear_use_id) {
+                            return GearProperties.find({ gear_use_id : gear_use_id });
+                        },
+
+    });
+
+    Template.suggested_gear_property.helpers({
+        suggested_gear_property : function (gear_use_id) {
+                                      var current_gear_properties = GearProperties.find({ gear_use_id : gear_use_id } , { gear_property_heading : 1 }).fetch();
+                                      var gear_use = GearUses.findOne({ _id : gear_use_id }).gear_use_text;
+                                      //TODO Investigate if we need to specify blank gear use text for default gear properties
+                                      console.log('Finding Suggested gear properties');
+                                      console.log(gear_use);
+                                      var suggested_gear_properties = SuggestedGearProperties.find({ 
+                                          $or : [ { gear_use_text : '' } , { gear_use_text : gear_use } ]  
+                                      });
+                                      console.log(SuggestedGearProperties.find({}).fetch());
+                                      //var suggested_gear_properties = SuggestedGearProperties.find({ gear_use_text : { empty : true } });
+
+                                      console.log(suggested_gear_properties.fetch());
+
+                                      return suggested_gear_properties;
+                                  },
+
+    });
+
     Template.gear_list.events({	
         'submit .gear_list': function (event) {
             var user_id = this.user_id;
@@ -38,7 +65,7 @@ if(Meteor.isClient) {
                 user_id: user_id,
                 gear_list_text: gear_list_text
             });
-            
+
             event.target.gear_list_text.value = "";
             return false;
         },
@@ -69,17 +96,75 @@ if(Meteor.isClient) {
         'submit .gear_use': function (event) {
             var gear_use = event.target.gear_use_text.value;
 
-            GearUses.insert({ gear_use_text: gear_use });
+            console.log('Submitting gear use')
+        console.log(gear_use)    
 
-            return false;
+        GearUses.insert({ 
+            gear_item_id: this.gear_item_id,
+            gear_use_text: gear_use 
+        });
+
+    return false;
         }
     });
+
+    Template.gear_property.helpers({
+        '.submit gear_property' : function (event) {
+            return false;
+
+        },
+
+    });
+
+    Template.suggested_gear_property.helpers({
+        '.submit suggested_gear_property' : function (event) {
+            var gear_property_text = event.target.gear_property_text.value;
+
+            console.log('submitting suggested gear property');
+            console.log(gear_property_text);
+
+            GearProperties.insert({ 
+                gear_use_id : gear_use_id,
+                gear_property_heading : this.gear_property_heading,
+                gear_property_text : this.gear_property_text
+            });
+
+            return false; 
+        },
+
+    });
+
 
     Session.set('user_id' , 0);
 }
 
+
 var GearLists = new Mongo.Collection("gear_lists");
 var GearItems = new Mongo.Collection("gear_items");
 var GearUses = new Mongo.Collection("gear_uses");
+var GearProperties = new Mongo.Collection("gear_properties");
+var SuggestedGearProperties = new Mongo.Collection("suggested_gear_properties");
 
+SuggestedGearProperties.remove({});
+
+SuggestedGearProperties.insert({  
+    gear_use_text : '',
+    gear_property_heading : 'Manufacturer' 
+});
+SuggestedGearProperties.insert({
+    gear_use_text : '',        
+    gear_property_heading : 'Weight'
+});
+SuggestedGearProperties.insert({
+    gear_use_text : 'Tarp',
+    gear_property_heading : 'Hydrostatic Head'
+});
+SuggestedGearProperties.insert({
+    gear_use_text : 'Poncho',
+    gear_property_heading : 'Hydrostatic Head'
+});
+SuggestedGearProperties.insert({
+    gear_use_text : 'Sleeping Bag',
+    gear_property_heading : 'Loft'
+});
 
