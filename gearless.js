@@ -35,20 +35,21 @@ if(Meteor.isClient) {
 
     Template.suggested_gear_property.helpers({
         suggested_gear_property : function (gear_use_id) {
-                                      var current_gear_properties = GearProperties.find({ gear_use_id : gear_use_id } , { gear_property_heading : 1 }).fetch();
+                                      console.log('Fetching suggested gear properties');
+                                      console.log(gear_use_id);
+                                      var current_gear_properties = GearProperties.find({ gear_use_id : gear_use_id }).fetch().map(function (gear_use) { return gear_use.gear_property_heading });
                                       var gear_use = GearUses.findOne({ _id : gear_use_id }).gear_use_text;
                                       //TODO Investigate if we need to specify blank gear use text for default gear properties
-                                      console.log('Finding Suggested gear properties');
-                                      console.log(gear_use);
                                       var suggested_gear_properties = SuggestedGearProperties.find({ 
-                                          $or : [ { gear_use_text : '' } , { gear_use_text : gear_use } ]  
+                                          $and : [ { $or : [ { gear_use_text : '' } , { gear_use_text : gear_use } ] },
+                                          { gear_property_heading : { $nin : current_gear_properties } } ]
                                       });
-                                      console.log(SuggestedGearProperties.find({}).fetch());
-                                      //var suggested_gear_properties = SuggestedGearProperties.find({ gear_use_text : { empty : true } });
+                                      console.log(current_gear_properties);
 
-                                      console.log(suggested_gear_properties.fetch());
-
-                                      return suggested_gear_properties;
+                                      return suggested_gear_properties.map(function(property) { 
+                                          property.gear_use_id = gear_use_id;
+                                          return property;
+                                      });
                                   },
 
     });
@@ -97,41 +98,42 @@ if(Meteor.isClient) {
             var gear_use = event.target.gear_use_text.value;
 
             console.log('Submitting gear use')
-        console.log(gear_use)    
+            console.log(gear_use)    
 
-        GearUses.insert({ 
-            gear_item_id: this.gear_item_id,
-            gear_use_text: gear_use 
-        });
+            GearUses.insert({ 
+                gear_item_id: this.gear_item_id,
+                gear_use_text: gear_use 
+            });
 
-    return false;
+        return false;
         }
     });
 
-    Template.gear_property.helpers({
-        '.submit gear_property' : function (event) {
+    Template.gear_property.events({
+        'submit .gear_property' : function (event) {
             return false;
 
         },
 
     });
 
-    Template.suggested_gear_property.helpers({
-        '.submit suggested_gear_property' : function (event) {
+    Template.suggested_gear_property.events({
+        'submit .suggested_gear_property' : function (event) {
             var gear_property_text = event.target.gear_property_text.value;
 
             console.log('submitting suggested gear property');
             console.log(gear_property_text);
+            console.log(this.gear_use_id);
+            console.log(this.gear_property_heading);
 
             GearProperties.insert({ 
-                gear_use_id : gear_use_id,
+                gear_use_id : this.gear_use_id,
                 gear_property_heading : this.gear_property_heading,
-                gear_property_text : this.gear_property_text
+                gear_property_text : gear_property_text
             });
 
             return false; 
-        },
-
+        }
     });
 
 
@@ -158,6 +160,10 @@ SuggestedGearProperties.insert({
 SuggestedGearProperties.insert({
     gear_use_text : 'Tarp',
     gear_property_heading : 'Hydrostatic Head'
+});
+SuggestedGearProperties.insert({
+    gear_use_text : 'Tarp',
+    gear_property_heading : 'Area'
 });
 SuggestedGearProperties.insert({
     gear_use_text : 'Poncho',
