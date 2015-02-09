@@ -34,22 +34,19 @@ if(Meteor.isClient) {
     });
 
     Template.suggested_gear_property.helpers({
-        suggested_gear_property : function (gear_use_id) {
+        suggested_gear_property : function (gear_item_id) {
                                       console.log('Fetching suggested gear properties');
-                                      console.log(gear_use_id);
-                                      var current_gear_properties = GearProperties.find({ gear_use_id : gear_use_id }).fetch().map(function (gear_use) { return gear_use.gear_property_heading });
-                                      var gear_use = GearUses.findOne({ _id : gear_use_id }).gear_use_text;
+                                      console.log(gear_item_id);
+                                      var current_gear_properties = GearProperties.find({ gear_item_id : gear_item_id }).fetch().map(function (gear_property) { return gear_property.gear_property_heading });
+                                      var current_gear_uses = GearUses.find({ gear_item_id : gear_item_id }).fetch().map(function (gear_use) { return gear_use.gear_use_text });
                                       //TODO Investigate if we need to specify blank gear use text for default gear properties
                                       var suggested_gear_properties = SuggestedGearProperties.find({ 
-                                          $and : [ { $or : [ { gear_use_text : '' } , { gear_use_text : gear_use } ] },
+                                          $and : [ { $or : [ { gear_use_text : '' } , { gear_use_text : { $in : current_gear_uses } } ] },
                                           { gear_property_heading : { $nin : current_gear_properties } } ]
                                       });
                                       console.log(current_gear_properties);
 
-                                      return suggested_gear_properties.map(function(property) { 
-                                          property.gear_use_id = gear_use_id;
-                                          return property;
-                                      });
+                                      return suggested_gear_properties;
                                   },
 
     });

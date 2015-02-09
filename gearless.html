@@ -47,8 +47,16 @@
             Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
         </form>
     </div>
-    <div class='col-md-9'>
+    <div class='col-md-3'>
         {{> gear_use gear_item_id=_id }}
+    </div>
+    <div class='col-md-6'>
+        <div class='row'>
+            {{> gear_property gear_item_id=_id}}
+        </div>
+        <div class='row'>
+            {{> suggested_gear_property gear_item_id=_id}}
+        </div>
     </div>
 </div>
 {{/each}}
@@ -64,41 +72,29 @@
 <template name='gear_use'>
 {{#each gear_use gear_item_id}}
 <div class='gear_use_container row border'>
-    <div class='col-md-3'>
-        <form class='gear_use'>
-            Gear Use <input type='text' name='gear_use_text' id={{_id}} value="{{gear_use_text}}"/>
-        </form>
-    </div>
-    <div class='col-md-9'>
-        <div class='row'>
-            {{> gear_property gear_use_id=_id}}
-        </div>
-        <div class='row'>
-            {{> suggested_gear_property gear_use_id=_id}}
-        </div>
-    </div>
+    <form class='gear_use'>
+        Gear Use <input type='text' name='gear_use_text' id={{_id}} value="{{gear_use_text}}"/>
+    </form>
 </div>
 {{/each}}
 <div class='add_gear_use_container row'>
-    <div class='col-md-3'>
-        <form class='gear_use'>
-            Gear Use <input type='text' name='gear_use_text'/>
-        </form>
-    </div>
+    <form class='gear_use'>
+        Gear Use <input type='text' name='gear_use_text'/>
+    </form>
 </div>
 </template>
 
 <template name='gear_property'>
-    <form class='gear_property'>
-        {{#each gear_property gear_use_id}}
-            {{gear_property_heading}} <input type='text' name='gear_property_text' id={{_id}} value="{{gear_property_text}}"/>
-        {{/each}}
-    </form>
+{{#each gear_property gear_item_id}}
+<form class='gear_property'>
+    {{gear_property_heading}} <input type='text' name='gear_property_text' id={{_id}} value="{{gear_property_text}}"/>
+</form>
+{{/each}}
 </template>
 
 <template name='suggested_gear_property'>
 <div class='col-md-12'>
-    {{#each suggested_gear_property gear_use_id}}
+    {{#each suggested_gear_property gear_item_id}}
     <div class='row'>
         <form class='suggested_gear_property'>
             {{gear_property_heading}} <input type='text' name='gear_property_text'/>
