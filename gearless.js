@@ -2,8 +2,6 @@ if(Meteor.isClient) {
     Template.gear_list.helpers({
 
         gear_list : function (user_id) {
-                        console.log("Fetching gear lists");
-                        console.log(user_id);
                         return GearLists.find({ user_id : user_id });
                     },
 
@@ -27,29 +25,37 @@ if(Meteor.isClient) {
     });
 
     Template.gear_property.helpers({
-        gear_property : function (gear_use_id) {
-                            return GearProperties.find({ gear_use_id : gear_use_id });
+        gear_property : function (gear_item_id) {
+                            return GearItems.find({ _id : gear_item_id }).properties;
                         },
 
     });
 
+    Template.suggested_gear_property.rendered = function() { 
+        //Only call inject for the currently rendered template's typehead input
+        //Things go weird if you call inject for inputs that are not rendered yet
+        Meteor.typeahead.inject(this.find('.typeahead'));
+    };
+
     Template.suggested_gear_property.helpers({
-        suggested_gear_property : function (gear_item_id) {
-                                      console.log('Fetching suggested gear properties');
-                                      console.log(gear_item_id);
-                                      var current_gear_properties = GearProperties.find({ gear_item_id : gear_item_id }).fetch().map(function (gear_property) { return gear_property.gear_property_heading });
-                                      var current_gear_uses = GearUses.find({ gear_item_id : gear_item_id }).fetch().map(function (gear_use) { return gear_use.gear_use_text });
-                                      //TODO Investigate if we need to specify blank gear use text for default gear properties
-                                      var suggested_gear_properties = SuggestedGearProperties.find({ 
-                                          $and : [ { $or : [ { gear_use_text : '' } , { gear_use_text : { $in : current_gear_uses } } ] },
-                                          { gear_property_heading : { $nin : current_gear_properties } } ]
-                                      });
-                                      console.log(current_gear_properties);
-
-                                      return suggested_gear_properties;
-                                  },
-
+        suggested_gear_properties : function () {
+                                        return SuggestedGearProperties.find().fetch().map(function(gear_property) { return {value: gear_property.gear_property_heading} });
+                                    },
     });
+
+    Template.wanted_gear.helpers({
+        get_wanted_gear : function (user_id) {
+                              var primary_gear_list = GearLists.find({ user_id : user_id }).fetchOne();
+
+                              //var gear_items = GearItems.find({ $and : [ { gear_list_id : primary_gear_list._id } , { wanted.value : true } ] });            
+                              var wanted_gear = gear_items.map( get_matching_gear_items(gear_item) );
+                          },
+
+        get_matching_gear_items : function(gear_item) {
+
+                                  },
+    });
+
 
     Template.gear_list.events({	
         'submit .gear_list': function (event) {
@@ -95,14 +101,14 @@ if(Meteor.isClient) {
             var gear_use = event.target.gear_use_text.value;
 
             console.log('Submitting gear use')
-            console.log(gear_use)    
+        console.log(gear_use)    
 
-            GearUses.insert({ 
-                gear_item_id: this.gear_item_id,
-                gear_use_text: gear_use 
-            });
+        GearUses.insert({ 
+            gear_item_id: this.gear_item_id,
+            gear_use_text: gear_use 
+        });
 
-        return false;
+    return false;
         }
     });
 
@@ -116,23 +122,26 @@ if(Meteor.isClient) {
 
     Template.suggested_gear_property.events({
         'submit .suggested_gear_property' : function (event) {
-            var gear_property_text = event.target.gear_property_text.value;
+            var gear_property_value = event.target.gear_property_text.value;
 
             console.log('submitting suggested gear property');
-            console.log(gear_property_text);
-            console.log(this.gear_use_id);
-            console.log(this.gear_property_heading);
 
-            GearProperties.insert({ 
-                gear_use_id : this.gear_use_id,
-                gear_property_heading : this.gear_property_heading,
-                gear_property_text : gear_property_text
-            });
+            var set_object = {}
+            set_object['properties'][this.gear_property_heading] = gear_property_value;
+
+            GearItem.update(
+                { _id : this.gear_item_id } ,
+                { $set : set_object }); 
 
             return false; 
         }
     });
 
+    /*Meteor.startup(function(){
+        // initializes all typeahead instances
+        console.log("initializing meteor typeagead");
+        Meteor.typeahead.inject();
+    });*/
 
     Session.set('user_id' , 0);
 }
@@ -147,27 +156,21 @@ var SuggestedGearProperties = new Mongo.Collection("suggested_gear_properties");
 SuggestedGearProperties.remove({});
 
 SuggestedGearProperties.insert({  
-    gear_use_text : '',
     gear_property_heading : 'Manufacturer' 
 });
 SuggestedGearProperties.insert({
-    gear_use_text : '',        
     gear_property_heading : 'Weight'
 });
 SuggestedGearProperties.insert({
-    gear_use_text : 'Tarp',
     gear_property_heading : 'Hydrostatic Head'
 });
 SuggestedGearProperties.insert({
-    gear_use_text : 'Tarp',
     gear_property_heading : 'Area'
 });
 SuggestedGearProperties.insert({
-    gear_use_text : 'Poncho',
     gear_property_heading : 'Hydrostatic Head'
 });
 SuggestedGearProperties.insert({
-    gear_use_text : 'Sleeping Bag',
     gear_property_heading : 'Loft'
 });
 

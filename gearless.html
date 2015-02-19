@@ -17,56 +17,61 @@
 <template name="gear_list">
 {{#with get_user_id}}
 <div class='gear_lists_container container-fluid'>
-    {{#each gear_list user_id}}
-    <div class='gear_list_container row border'>
-        <div class='col-md-2'>
-            {{ gear_list_text }}
+    <ul class='list-group'>
+        {{#each gear_list user_id}}
+        <li class='list-group-item'>
+        <div class='gear_items_container row'>
+            <h4 class='col-md-12 list-group-item-heading'>
+                {{ gear_list_text }}
+            </h4>
+            <div class='col-md-12'>
+                {{> gear_item gear_list_id=_id }}
+            </div>
         </div>
-        <div class='col-md-10'>
-            {{> gear_item gear_list_id=_id }}
+        </li>
+        {{/each}}
+        <li class='list-group-item'>
+        <div class="add_gear_list_container row">
+            <div class='col-md-2'>
+                <form class='gear_list'>
+                    <input type='text' name='gear_list_text'/>
+                    <input type='submit' value='Add Gear List'/>
+                </form>
+            </div>
         </div>
-    </div>
-    {{/each}}
-    <div class="add_gear_list_container row">
-        <div class='col-md-2'>
-            <form class='gear_list'>
-                <input type='text' name='gear_list_text'/>
-                <input type='submit' value='Add Gear List'/>
-            </form>
-        </div>
-    </div>
+        </li>
+    </ul>
 </div>
 {{/with}}
 </template>
 
 <template name='gear_item'>
-{{#each gear_item gear_list_id}}
-<div class='gear_item_container row border'>
-    <div class='col-md-3'>
-        <form class='gear_item'>
-            Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
-        </form>
-    </div>
-    <div class='col-md-3'>
-        {{> gear_use gear_item_id=_id }}
-    </div>
-    <div class='col-md-6'>
-        <div class='row'>
-            {{> gear_property gear_item_id=_id}}
+<ul class='list-group'>
+    {{#each gear_item gear_list_id}}
+    <li class='list-group-item'>
+    <div class='gear_item_container row'>
+        <div class='col-md-3'>
+            <form class='gear_item'>
+                Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
+            </form>
         </div>
-        <div class='row'>
+        <div class='col-md-9'>
+            {{> gear_property gear_item_id=_id}}
             {{> suggested_gear_property gear_item_id=_id}}
         </div>
     </div>
-</div>
-{{/each}}
-<div class="add_gear_item_container row">
-    <div class='col-md-3'>
-        <form class='gear_item'>
-            Gear Item <input type='text' name='gear_item_text'/>
-        </form>
+    </li>
+    {{/each}}
+    <li class='list-group-item'>
+    <div class="add_gear_item_container row">
+        <div class='col-md-3'>
+            <form class='gear_item'>
+                Gear Item <input type='text' name='gear_item_text'/>
+            </form>
+        </div>
     </div>
-</div>
+    </li>
+</ul>
 </template>
 
 <template name='gear_use'>
@@ -85,23 +90,26 @@
 </template>
 
 <template name='gear_property'>
-{{#each gear_property gear_item_id}}
-<form class='gear_property'>
-    {{gear_property_heading}} <input type='text' name='gear_property_text' id={{_id}} value="{{gear_property_text}}"/>
-</form>
-{{/each}}
+    {{#each gear_property gear_item_id}}
+    <form class='gear_property'>
+        {{gear_property_heading}} <input type='text' name='gear_property_text' id={{_id}} value="{{gear_property_text}}"/>
+    </form>
+    {{/each}}
 </template>
 
 <template name='suggested_gear_property'>
+<input type='text' name='gear_property' class='form-control typeahead' 
+    placeholder='Gear Property'
+    autocomplete='off'
+    data-source='suggested_gear_properties'/>
+</template>
+
+<template name='wanted_gear'>
 <div class='col-md-12'>
-    {{#each suggested_gear_property gear_item_id}}
+    {{#each get_wanted_gear user_id}} 
     <div class='row'>
-        <form class='suggested_gear_property'>
-            {{gear_property_heading}} <input type='text' name='gear_property_text'/>
-        </form>
+        Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
     </div>
     {{/each}}
 </div>
 </template>
-
-
