@@ -1,0 +1,30 @@
+<template name="gear_list">
+{{#with get_user_id}}
+<div class='gear_lists_container container-fluid'>
+    <ul class='list-group'>
+        {{#each gear_list user_id}}
+        <li class='list-group-item'>
+        <div class='gear_items_container row'>
+            <h4 class='col-md-12 list-group-item-heading'>
+                {{ gear_list_text }}
+            </h4>
+            <div class='col-md-12'>
+                {{> gear_item gear_list_id=_id }}
+            </div>
+        </div>
+        </li>
+        {{/each}}
+        <li class='list-group-item'>
+        <div class="add_gear_list_container row">
+            <div class='col-md-2'>
+                <form class='gear_list'>
+                    <input type='text' name='gear_list_text'/>
+                    <input type='submit' value='Add Gear List'/>
+                </form>
+            </div>
+        </div>
+        </li>
+    </ul>
+</div>
+{{/with}}
+</template>

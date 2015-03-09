@@ -3,3 +3,11 @@
 .border {
     outline: 1px solid red;
 }
+
+.tt-dropdown-menu { 
+    width: 422px;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    border-radius: 8px;
+}

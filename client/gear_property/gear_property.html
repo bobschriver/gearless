@@ -1,0 +1,7 @@
+<template name='gear_property'>
+    {{#each gear_property gear_item_id}}
+    <form class='gear_property'>
+        {{gear_property_heading}} <input type='text' name='gear_property_text' id={{_id}} value="{{gear_property_text}}"/>
+    </form>
+    {{/each}}
+</template>

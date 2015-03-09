@@ -1,0 +1,28 @@
+<template name='gear_item'>
+<ul class='list-group'>
+    {{#each gear_item gear_list_id}}
+    <li class='list-group-item'>
+    <div class='gear_item_container row'>
+        <div class='col-md-3'>
+            <form class='gear_item'>
+                Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
+            </form>
+        </div>
+        <div class='col-md-9'>
+            {{> gear_property gear_item_id=_id}}
+            {{> suggested_gear_property gear_item_id=_id}}
+        </div>
+    </div>
+    </li>
+    {{/each}}
+    <li class='list-group-item'>
+    <div class="add_gear_item_container row">
+        <div class='col-md-3'>
+            <form class='gear_item'>
+                Gear Item <input type='text' name='gear_item_text'/>
+            </form>
+        </div>
+    </div>
+    </li>
+</ul>
+</template>

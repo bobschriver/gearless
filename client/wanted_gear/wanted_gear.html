@@ -1,0 +1,9 @@
+<template name='wanted_gear'>
+<div class='col-md-12'>
+    {{#each get_wanted_gear user_id}} 
+    <div class='row'>
+        Gear Item <input type='text' name='gear_item' id={{_id}} value="{{gear_item_text}}"/>
+    </div>
+    {{/each}}
+</div>
+</template>
